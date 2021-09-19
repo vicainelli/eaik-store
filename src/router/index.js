@@ -11,14 +11,9 @@ const routes = [
     component: Home,
   },
   {
-    path: '/users',
-    name: 'users-index',
-    component: () => import(/* webpackChunkName: "users-index" */ '@/components/pages/users/Index.vue'),
-  },
-  {
     path: '/products',
     name: 'products-index',
-    component: () => import(/* webpackChunkName: "products-index" */ '@/components/pages/products/Index.vue'),
+    component: () => import(/* webpackChunkName: "products-index" */ '@/components/pages/products/ProductsIndex.vue'),
   },
 ]
 

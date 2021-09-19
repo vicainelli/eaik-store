@@ -6,10 +6,6 @@ import './index.css'
 
 Vue.config.productionTip = false
 
-if (process.env.NODE_ENV === 'development' && !window.Cypress) {
-  require('./miragejs/server').makeServer()
-}
-
 new Vue({
   router,
   store,

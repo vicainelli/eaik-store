@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { products } from '@/api'
-import * as productsMock from '../../../src/fixtures/products.json'
+const productsMock = {}
 
 jest.mock('axios')
 
-describe('User API', () => {
+describe('Products API', () => {
   it('calls axios and return products', async () => {
     axios.get.mockResolvedValue({
       data: productsMock,
