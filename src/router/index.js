@@ -15,6 +15,11 @@ const routes = [
     name: 'products-index',
     component: () => import(/* webpackChunkName: "products-index" */ '@/components/pages/products/ProductsIndex.vue'),
   },
+  {
+    path: '/cart',
+    name: 'cart-index',
+    component: () => import(/* webpackChunkName: "cart-index" */ '@/components/pages/cart/CartIndex.vue'),
+  },
 ]
 
 const router = new VueRouter({
