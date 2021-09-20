@@ -4,9 +4,6 @@ Complete boilerplate for web development
 
 - [VueJS](https://vuejs.org/)
 - [Tailwdin CSS](https://tailwindcss.com/)
-- [CypressJS](https://www.cypress.io/)
-- [Testing Library](https://testing-library.com/)
-- [MirageJS](https://miragejs.com/)
 
 ## Project setup
 

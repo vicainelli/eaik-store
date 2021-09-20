@@ -17,11 +17,12 @@ const actions = {
       .getAll()
       .then((res) => {
         commit('SET_PRODUCTS', res.products ? res.products : res)
-        commit('SET_LOADING', false)
       })
       .catch((error) => {
-        commit('SET_LOADING', false)
         throw error
+      })
+      .finally(() => {
+        commit('SET_LOADING', false)
       })
   },
 }

@@ -5,6 +5,7 @@ const state = {
 
 const getters = {
   getCart: (state) => state.cart,
+  getCartLength: (state) => state.cart.reduce((prev, curr) => prev + curr.quantity, 0),
   getIsLoading: (state) => state.isLoading,
 }
 

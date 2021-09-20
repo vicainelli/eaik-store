@@ -1,22 +1,21 @@
 <template>
   <div>
-    <div class="dark:bg-black dark:bg-opacity-50 py-4 dark:text-white">
-      <div class="mx-auto max-w-screen-xl">
-        <header class="flex justify-between">
-          <div>eaki store</div>
-          <nav class="">
-            <router-link class="mx-2" to="products">products</router-link>
-          </nav>
-          <div>cart</div>
-        </header>
+    <Header />
+    <div class="mx-auto max-w-screen-xl">
+      <div class="mx-4">
+        <router-view></router-view>
       </div>
     </div>
-    <router-view></router-view>
   </div>
 </template>
 
 <script>
+import Header from '@/components/organisms/header'
+
 export default {
   name: 'app',
+  components: {
+    Header,
+  },
 }
 </script>

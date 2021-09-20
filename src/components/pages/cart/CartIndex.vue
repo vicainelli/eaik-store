@@ -3,10 +3,14 @@
     <Heading>Cart</Heading>
 
     <div>
-      <div class="dark:bg-white dark:bg-opacity-5 mb-4 p-4 rounded" v-for="itemCart in getCart" :key="itemCart.id">
+      <div
+        class="bg-white bg-opacity-70 dark:bg-white dark:bg-opacity-5 mb-4 p-4 rounded"
+        v-for="itemCart in getCart"
+        :key="itemCart.id"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <span class="text-white text-lg">{{ itemCart.name }}</span>
+            <span class="text-gray-700 dark:text-white text-lg">{{ itemCart.name }}</span>
           </div>
           <div>
             <div class="flex items-center">
@@ -21,11 +25,22 @@
                   </svg>
                 </button>
               </div>
-              <div class="mx-2 w-12 text-sm p-1 rounded dark:bg-white dark:bg-opacity-60 text-center">
+              <div
+                class="
+                  mx-2
+                  w-12
+                  text-sm
+                  p-1
+                  rounded
+                  bg-gray-300
+                  dark:bg-white dark:bg-opacity-60
+                  text-center text-gray-700
+                "
+              >
                 {{ itemCart.quantity }}
               </div>
               <div>
-                <button @click="addToCart(itemCart)" class="flex">
+                <button @click="addToCart(itemCart)" class="flex text-gray-700 dark:text-yellow-500">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path
                       fill-rule="evenodd"
@@ -42,7 +57,8 @@
                     text-xs
                     py-1.5
                     px-3
-                    bg-gray-100
+                    bg-gray-800
+                    text-white
                     rounded-full
                     dark:hover:bg-black dark:hover:bg-opacity-70 dark:bg-gray-900 dark:text-gray-200
                     transition-all
@@ -58,7 +74,9 @@
       </div>
     </div>
     <div class="flex justify-end">
-      <button class="bg-yellow-400 py-2 px-3 rounded font-bold text-black text-opacity-70">to order</button>
+      <button @click="toOrder" class="bg-yellow-400 py-2 px-3 rounded font-bold text-black text-opacity-70">
+        to order
+      </button>
     </div>
   </div>
 </template>
@@ -77,6 +95,22 @@ export default {
   },
   methods: {
     ...mapActions('Cart', ['addToCart']),
+    toOrder() {
+      const articlesToOrder = []
+      this.getCart.forEach((itemCart) => {
+        itemCart.articles.forEach((article) => {
+          if (!articlesToOrder.find((item) => item.articleId === article.id)) {
+            articlesToOrder.push({ articleId: article.id, amount: itemCart.quantity * article.amountRequired })
+          } else {
+            articlesToOrder.find((item) => item.articleId === article.id).amount +=
+              itemCart.quantity * article.amountRequired
+          }
+        })
+      })
+
+      // TODO send this data to a method that will compare with the inventory and return a list of articles that are not available
+      articlesToOrder.forEach((item) => console.log(item))
+    },
   },
 }
 </script>
