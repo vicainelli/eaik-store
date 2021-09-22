@@ -1,3 +1,4 @@
+import articles from './articles'
 import products from './products'
 
-export { products }
+export { articles, products }

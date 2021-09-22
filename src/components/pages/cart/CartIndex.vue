@@ -1,8 +1,16 @@
 <template>
   <div>
     <Heading>Cart</Heading>
+    <div v-if="getCartLength < 1">
+      <div class="p-3 text-center">
+        <div>
+          <p class="dark:text-white">The cart is empty</p>
+          <router-link class="dark:text-white" to="products">go to the products page</router-link>
+        </div>
+      </div>
+    </div>
 
-    <div>
+    <div v-else>
       <div
         class="bg-white bg-opacity-70 dark:bg-white dark:bg-opacity-5 mb-4 p-4 rounded"
         v-for="itemCart in getCart"
@@ -15,7 +23,10 @@
           <div>
             <div class="flex items-center">
               <div v-if="itemCart.quantity >= 2">
-                <button class="flex">
+                <button
+                  @click="removeFromCart({ id: itemCart.id, quantity: 1 })"
+                  class="flex text-gray-700 dark:text-yellow-500"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path
                       fill-rule="evenodd"
@@ -51,32 +62,15 @@
                 </button>
               </div>
               <div class="ml-8">
-                <button
-                  class="
-                    inline-flex
-                    text-xs
-                    py-1.5
-                    px-3
-                    bg-gray-800
-                    text-white
-                    rounded-full
-                    dark:hover:bg-black dark:hover:bg-opacity-70 dark:bg-gray-900 dark:text-gray-200
-                    transition-all
-                    duration-200
-                  "
-                >
-                  remove
-                </button>
+                <Button @click="removeFromCart(itemCart)" button-type="secondary" button-size="sm">remove</Button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="flex justify-end">
-      <button @click="toOrder" class="bg-yellow-400 py-2 px-3 rounded font-bold text-black text-opacity-70">
-        to order
-      </button>
+      <div class="flex justify-end">
+        <Button button-type="primary" @click="toOrder">to order</Button>
+      </div>
     </div>
   </div>
 </template>
@@ -84,18 +78,22 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import Heading from '@/components/atoms/heading'
+import Button from '@/components/atoms/button'
+import { articles } from '@/api'
 
 export default {
   name: 'cart-index',
   components: {
+    Button,
     Heading,
   },
+
   computed: {
-    ...mapGetters('Cart', ['getCart']),
+    ...mapGetters('Cart', ['getCart', 'getCartLength']),
   },
   methods: {
-    ...mapActions('Cart', ['addToCart']),
-    toOrder() {
+    ...mapActions('Cart', ['addToCart', 'removeFromCart']),
+    async toOrder() {
       const articlesToOrder = []
       this.getCart.forEach((itemCart) => {
         itemCart.articles.forEach((article) => {
@@ -108,8 +106,51 @@ export default {
         })
       })
 
-      // TODO send this data to a method that will compare with the inventory and return a list of articles that are not available
-      articlesToOrder.forEach((item) => console.log(item))
+      await articles
+        .getBulk(articlesToOrder)
+        .then((res) => res.map((r) => r.data))
+        .then((articles) => {
+          articles.find((article) => article.id === 1)
+
+          const inventoryVsOrder = this.isInventoryHandleTheOrder(articles, articlesToOrder)
+
+          if (!inventoryVsOrder.status) {
+            debugger
+            this.$breadstick.notify(`⚠️ ${inventoryVsOrder.article.name} has not enough amount in stock`, {
+              position: 'bottom-right',
+            })
+            return
+          }
+
+          // TODO call the `sales` endpoint with the articles to order
+          this.$breadstick.notify('call the sales endpoint with the articles to order')
+          return articles
+        })
+        .catch((error) => {
+          debugger
+          this.$breadstick.notify(`⚠️ ${error.message}`, {
+            position: 'bottom-right',
+          })
+        })
+    },
+
+    isInventoryHandleTheOrder(articlesOnInventory, articlesToOrder) {
+      // * Loop through the articles and check if the amount is available
+      for (let i = 0; i < articlesOnInventory.length; i++) {
+        const article = articlesOnInventory[i]
+        const amountToOrder = articlesToOrder.find((i) => article.id === i.articleId).amount
+        // * IF some article has not enough stock, then we should not order it
+        if (article.amountInStock < amountToOrder) {
+          return {
+            status: false,
+            article,
+          }
+        }
+      }
+      return {
+        status: true,
+        article: null,
+      }
     },
   },
 }

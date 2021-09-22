@@ -1,34 +1,33 @@
-import { products } from '@/api'
+import { articles } from '@/api'
 
 const state = {
   isLoading: false,
-  products: [],
+  articles: [],
 }
 
 const getters = {
-  getProducts: (state) => state.products,
+  getArticles: (state) => state.articles,
   getIsLoading: (state) => state.isLoading,
 }
 
 const actions = {
-  fetchProducts: async ({ commit }) => {
+  fetchArticles: async ({ commit }) => {
     commit('SET_LOADING', true)
-    return await products
+    return await articles
       .getAll()
       .then((res) => {
-        commit('SET_PRODUCTS', res.products ? res.products : res)
+        commit('SET_PRODUCTS', res.articles ? res.articles : res)
+        commit('SET_LOADING', false)
       })
       .catch((error) => {
-        throw error
-      })
-      .finally(() => {
         commit('SET_LOADING', false)
+        throw error
       })
   },
 }
 
 const mutations = {
-  SET_PRODUCTS: (state, payload) => (state.products = payload),
+  SET_ARTICLES: (state, payload) => (state.articles = payload),
   SET_LOADING: (state, payload) => (state.isLoading = payload),
 }
 
